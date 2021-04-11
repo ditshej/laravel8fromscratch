@@ -6,6 +6,8 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 
@@ -16,12 +18,21 @@ class Post
 
     }
 
-    public static function find($slug)
+    public static function find($slug) : ?self
     {
         return static::all()->firstWhere('slug', $slug);
     }
 
-    public static function all(): \Illuminate\Support\Collection
+    public static function findOrFail($slug) : self
+    {
+        $post = static::find($slug);
+        if (! $post) {
+            throw new ModelNotFoundException();
+        }
+        return $post;
+    }
+
+    public static function all(): Collection
     {
         return cache()->rememberForever('posts.all', function () {
             return collect(File::files(resource_path("posts")))
