@@ -16,13 +16,15 @@ class RegisterController extends Controller
 
     public function store()
     {
-        User::create(
-            request()?->validate([
+        $attributes = request()?->validate([
             'name' => 'required',
             'username' => 'required|min:3',
             'email' => 'required|email',
             'password' => ['required', 'min:7', 'max:255']
-        ]));
+        ]);
+
+        User::create($attributes);
+
         return redirect('/');
     }
 }
