@@ -18,16 +18,15 @@ class SessionsController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-
-        if (auth()->attempt($attribues)) {
-            session()->regenerate();
-
-            return redirect('/')->with('success', 'Welcome Back!');
+        if (!auth()->attempt($attribues)) {
+            throw ValidationException::withMessages([
+                'email' => 'Your provided credentials could not be verified.'
+            ]);
         }
 
-        throw ValidationException::withMessages([
-            'email' => 'Your provided credentials could not be verified.'
-        ]);
+        session()->regenerate();
+
+        return redirect('/')->with('success', 'Welcome Back!');
     }
 
     public function destroy()
