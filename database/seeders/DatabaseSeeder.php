@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -15,11 +16,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::factory()->create([
+        $users = User::factory(3)->create([
             'name' => 'John Doe'
         ]);
-        Post::factory(15)->create([
-            'user_id' => $user->id
-        ]);
+        foreach ($users as $user) {
+            $posts = Post::factory(15)->create([
+                'user_id' => $user->id
+            ]);
+            foreach ($posts as $post) {
+                Comment::factory(3)->create([
+                    'post_id' => $post->id,
+                ]);
+            }
+        }
+
     }
 }
